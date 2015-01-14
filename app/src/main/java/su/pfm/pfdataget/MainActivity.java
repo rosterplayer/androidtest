@@ -12,8 +12,9 @@ public class MainActivity extends ActionBarActivity implements Runnable {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         requestWindowFeature(getWindow().FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Handler handler = new Handler();
