@@ -5,12 +5,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import volley.Request;
+import volley.RequestQueue;
+import volley.Response;
+import volley.VolleyError;
+import volley.toolbox.JsonObjectRequest;
+import volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,29 +22,33 @@ import org.json.JSONObject;
 public class Api {
 
     private RequestQueue mQueue;
-    public static final String SERVER_URL = "www.pfm.su/androidtest/data.php?id=";
-    private ArrayList<String> mNames;
+    public static final String SERVER_URL = "http://www.pfm.su/androidtest/data.php?id=";
+
+    private OnPlayerSearchListener mListener;
 
     public Api(Context context) {
         mQueue = Volley.newRequestQueue(context);
     }
 
-    public ArrayList<String> getData(String id) {
+    public void getData(String id) {
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, SERVER_URL +  id, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject json) {
+
+                ArrayList<String> players = new ArrayList<>();
 
                 try {
                     JSONArray data = json.getJSONArray("players");
                     for (int i = 0; i < data.length(); i++) {
                         JSONObject name = data.getJSONObject(i);
                         String n = name.getString("name");
-                        mNames.add(n);
+                        players.add(n);
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                mListener.onPlayerSearch(players);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -53,6 +57,10 @@ public class Api {
             }
         });
         mQueue.add(jsonObjRequest);
-        return mNames;
+    }
+
+    public void setOnPlayerChangeListener(OnPlayerSearchListener listener) {
+
+        mListener = listener;
     }
 }
